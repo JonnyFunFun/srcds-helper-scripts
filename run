@@ -1,0 +1,42 @@
+#!/bin/bash
+STEAMDIR=/srv/steam
+GAME=$1
+
+die () {
+    echo -e >&2 "$@"
+    exit 1
+}
+
+[ "$#" -eq 1 ] || die "Usage: $0 <game>"
+
+if [ ! -d $STEAMDIR/$GAME ]; then
+	die "Unable to run $GAME, it is not installed!\nGDir: $STEAMDIR/$GAME"
+fi
+
+GAMENAME=`cat $STEAMDIR/$GAME/.gname`
+
+echo -e "Preparing to launch $GAMENAME from $STEAMDIR/$GAME...\n"
+
+# Gather parameters
+read -p "Maximum Players? [16] : " MAXPLAYERS
+MAXPLAYERS=${MAXPLAYERS:-16}
+read -p "Port? [27015] : " PORT
+PORT=${PORT:-27015}
+read -p "Starting Map? [REQUIRED] : " MAP
+if [ -z "$MAP" ]; then
+	die "Unable to start server - starting map is REQUIRED!"
+fi
+
+echo "Select the homed IP address:"
+select IP in `ip addr | sed -n -e 's/:127\.0\.0\.1 //g' -e 's/ *inet \([0-9.]\+\).*/\1/gp' | grep -v '127.0.0.1'`
+do
+	if [[ -n $IP ]]
+	then
+		break
+	fi
+done
+
+# correction for css
+[ $GAMENAME="Counter-Strike Source" ] || GAMENAME='cstrike'
+
+$STEAMDIR/$GAME/srcds_run -console -game $GAMENAME +map $MAP +maxplayers $MAXPLAYERS +port $PORT +ip $IP

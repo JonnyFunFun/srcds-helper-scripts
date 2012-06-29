@@ -1,0 +1,26 @@
+#!/bin/bash
+STEAMDIR=/srv/steam
+GAME=$1
+
+die () {
+    echo -e >&2 "$@"
+    exit 1
+}
+
+[ "$#" -eq 1 ] || die "Usage: $0 <game>"
+
+if [ ! -d "$STEAMDIR/$GAME" ]; then
+	die "Unable to update $GAME, it is not installed!\nGDir: $STEAMDIR/$GAME"
+fi
+
+if [ ! -f "$STEAMDIR/$GAME/.gname" ]; then
+	die "Unable to update $GAME, .gname file missing!"
+fi
+
+echo "Updating $STEAMDIR/$GAME..."
+GAMENAME=`cat $STEAMDIR/$GAME/.gname`
+echo "Game: $GAMENAME"
+
+$STEAMDIR/steam -command update -game "$GAMENAME" -dir $STEAMDIR/$GAME
+
+echo -e "\nDONE!"

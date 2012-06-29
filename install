@@ -1,0 +1,70 @@
+#!/bin/bash
+STEAMDIR=/srv/steam
+
+die () {
+    echo -e >&2 "$@"
+    exit 1
+}
+
+echo "PLEASE SELECT YOUR DESIRED GAME:"
+echo " [a] Counter-Strike:Source           [b] Half-Life 2 Deathmatch"
+echo " [c] Age of Chivalry                 [d] Darkest Hour"
+echo " [e] Defence Alliance 2              [f] D.I.P.R.I.P. Warm Up"
+echo " [g] Day of Defeat:Source            [h] Dystopia"
+echo " [i] Episode 1 Engine                [j] Eternal Silence"
+echo " [k] Garry's Mod                     [l] Insurgency"
+echo " [m] Killing Floor                   [n] Left 4 Dead - Full"
+echo " [o] Left 4 Dead                     [p] Left 4 Dead 2 - Demo"
+echo " [q] Left 4 Dead 2                   [r] Mare Nostrum"
+echo " [s] Nuclear Dawn                    [t] Orange Box Engine"
+echo " [u] Pirates, Vikings and Knights 2  [v] Red Orchestra"
+echo " [w] Ship                            [x] Smashball"
+echo " [y] Synergy                         [z] Team Fortress 2"
+echo " [A] Zombie Panic!:Source"
+echo ""
+echo " [0] Exit/Stop"
+echo "________________________________________________________________"
+echo " "
+
+read -p "Make your selection [a-z,A,0]: " GAME
+case $GAME in
+	a) GAME='Counter-Strike Source'; GDIR='cstrike' ;;
+	b) GAME='hl2mp' ;;
+	c) GAME='ageofchivalry' ;;
+	d) GAME='darkesthour' ;;
+	e) GAME='defencealliance2' ;;
+	f) GAME='diprip' ;;
+	g) GAME='dods' ;;
+	h) GAME='dystopia' ;;
+	i) GAME='episode1' ;;
+	j) GAME='esmod' ;;
+	k) GAME='garrysmod' ;;
+	l) GAME='insurgency' ;;
+	m) GAME='killingfloor' ;;
+	n) GAME='l4d_full' ;;
+	o) GAME='left4dead' ;;
+	p) GAME='left4dead2_demo' ;;
+	q) GAME='left4dead2' ;;
+	r) GAME='marenostrum' ;;
+	s) GAME='nucleardawn' ;;
+	t) GAME='orangebox' ;;
+	u) GAME='pvkii' ;;
+	v) GAME='redorchestra' ;;
+	w) GAME='ship' ;;
+	x) GAME='smashball' ;;
+	y) GAME='synergy' ;;
+	z) GAME='tf' ;;
+	A) GAME='zps' ;;
+	0) exit ;;
+	*) echo " !! Please try again making a valid selection !! "; exit 1 ;;
+esac
+
+read -p "Desired subdirectory? " DIR
+
+echo "Installing $GAME to $STEAMDIR/$DIR..."
+mkdir $STEAMDIR/$DIR
+echo $GAME > $STEAMDIR/$DIR/.gname
+
+$STEAMDIR/steam -command update -game "$GAME" -dir $STEAMDIR/$DIR
+
+echo -e "\nDONE!"

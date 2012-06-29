@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# some "constants"
+UPDATETOOL_URL=http://www.steampowered.com/download/hldsupdatetool.bin
+
+# resolve the current script's folder
+SOURCE="${BASH_SOURCE[0]}"
+STEAMDIR="$( dirname "$SOURCE" )"
+while [ -h "$SOURCE" ]
+do 
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$STEAMDIR/$SOURCE"
+  STEAMDIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
+done
+STEAMDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+echo "We are about to install Steam to $STEAMDIR"
+read -p "Continue? [Yn] " YN
+
+if [ ! $YN="Y" ]; then
+    die "Aborting!"
+fi
+
+# so we can get back
+CWD=`pwd`
+
+# go into our destination and do the install
+cd $STEAMDIR
+echo "Getting hldsupdatetool.bin..."
+wget $UPDATETOOL_URL
+echo "Running the tool..."
+chmod +x hldsupdatetool.bin
+$STEAMDIR/hldsupdatetool.bin
+
+echo "Updating steam..."
+$STEAMDIR/steam
+
+echo -e "\nDONE!"
